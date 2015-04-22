@@ -1,0 +1,8 @@
+<launch>
+	<node pkg="nodelet" type="nodelet" name="depth_manager" args="manager" output="screen" />
+	<node pkg="nodelet" type="nodelet" name="depth_pcl_creator" args="load depth_image_proc/point_cloud_xyz depth_manager" output="screen">
+		<remap from="image_rect" to="/girona500_RAUVI/rangecamera" />
+		<remap from="/girona500_RAUVI/camera_info" to="/girona500_RAUVI/rangecamera/camera_info" />
+		<remap from="points" to="/girona500_RAUVI/points" />
+	</node>
+</launch>
