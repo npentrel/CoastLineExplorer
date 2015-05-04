@@ -87,7 +87,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+   INCLUDE_DIRS include
 #  LIBRARIES reef_explorer
 #  CATKIN_DEPENDS message_filters roscpp sensor_msgs tf
 #  DEPENDS system_lib
@@ -101,16 +101,23 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include/reef_explorer
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(reef_explorer
-#   src/${PROJECT_NAME}/reef_explorer.cpp
-# )
+#add_library(reef_explorer
+#  src/${PROJECT_NAME}/reef_explorer.cpp
+#)
+
+set(REEF_EXPLORER_SOURCES 
+      src/reef_explorer_node.cpp
+      src/distance_finder.cpp
+      src/explore_algorithm.cpp
+   )
 
 ## Declare a cpp executable
-add_executable(reef_explorer_node src/reef_explorer_node.cpp)
+add_executable(reef_explorer_node ${REEF_EXPLORER_SOURCES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
