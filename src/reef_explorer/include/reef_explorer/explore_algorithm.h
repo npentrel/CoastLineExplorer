@@ -32,7 +32,8 @@ public:
 
 protected:
 private:
-    void moveTowardsCliff();
+    void controlDistanceToCliff();
+    void setErrorValues();
     void followCliff();
     void initOdom();
 
@@ -44,6 +45,12 @@ private:
     ros::Publisher position_pub;
     nav_msgs::Odometry odom;
     std::string odometryTopic;
+
+    double error;
+    double total_error_I;
+    double derivative_error_D;
+    double last_error;
+    double current_fix;
 };
 
 #endif
