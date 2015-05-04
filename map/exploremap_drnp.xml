@@ -17,15 +17,15 @@
     <fog>
       <density> 0.001 </density>
       <color>
-	<r>0.017</r>
-	<g>0.027</g>
-	<b>0.079</b>
+	      <r>0.017</r>
+	      <g>0.027</g>
+	      <b>0.079</b>
       </color>
     </fog>
     <color>
-	<r>0.017</r>
-	<g>0.027</g>
-	<b>0.079</b>
+	    <r>0.017</r>
+	    <g>0.027</g>
+	    <b>0.079</b>
     </color>
     <attenuation>
       <r>0.015</r>
@@ -131,7 +131,7 @@
     <position>
       <x> 0</x>
       <y> 0 </y>
-      <z> -40 </z>
+      <z> -20 </z>
     </position>
     <orientation>
       <r>1.57</r>
