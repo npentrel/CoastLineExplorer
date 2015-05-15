@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   std_msgs
   image_transport
+  tf_conversions
 )
 
 ## System dependencies are found with CMake's conventions

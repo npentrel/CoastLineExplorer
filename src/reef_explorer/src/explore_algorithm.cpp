@@ -1,5 +1,6 @@
 #include "../include/reef_explorer/explore_algorithm.h"
 
+
 ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic)
 {
     this->minimumDistanceValue = std::numeric_limits<double>::max();
@@ -31,9 +32,13 @@ ExploreAlgorithm::~ExploreAlgorithm() {
 
 }
 
-
 void ExploreAlgorithm::runExploreAlgorithm()
 {
+
+    ros::NodeHandle nh("~");
+    ros::Subscriber pcl_sub = nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >("points_in", 1, &ExploreAlgorithm::pclCallback, this);
+
+
     setErrorValues();
     this->initOdom();
     this->getTF();
@@ -55,6 +60,7 @@ void ExploreAlgorithm::runExploreAlgorithm()
         default:
             break;
     }
+
 }
 
 double* ExploreAlgorithm::getMinimumDistanceValuePointer()
@@ -62,21 +68,16 @@ double* ExploreAlgorithm::getMinimumDistanceValuePointer()
     return &minimumDistanceValue;
 }
 
-void ExploreAlgorithm::controlDistanceToCliff()
-{
-    if(this->minimumDistanceValue > this->scanDistance)
-    {
+void ExploreAlgorithm::controlDistanceToCliff() {
+    if(this->minimumDistanceValue > this->scanDistance) {
         this->odom.twist.twist.linear.x = this->xSpeed * 5;
-    }
-    else if(this->minimumDistanceValue < this->scanDistance - this->scanDistanceDownMovementOffset)
-    {
+    } else if(this->minimumDistanceValue < this->scanDistance - this->scanDistanceDownMovementOffset) {
         this->odom.twist.twist.linear.x = -this->xSpeed * 2;
-    }
-    else
-    {
+    } else {
         this->odom.twist.twist.linear.x = 0.0;
         this->state = 1;
     }
+
     this->position_pub.publish(this->odom);
 }
 
@@ -230,4 +231,25 @@ void ExploreAlgorithm::moveRight()
         }
     }
     this->position_pub.publish(this->odom);
+}
+
+void ExploreAlgorithm::pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud_in){
+        tf::StampedTransform sensor_tf;
+        ros::Time t;
+        t.fromNSec(cloud_in->header.stamp);
+        this->listener.lookupTransform(this->tfBaseName, cloud_in->header.frame_id, t, this->transform);
+
+        Eigen::Affine3d sensor_pose;
+        tf::transformTFToEigen(sensor_tf, sensor_pose);
+        pcl::RangeImage range_image;
+        Eigen::Affine3f sensor_posef(sensor_pose);
+        range_image.createFromPointCloud(*cloud_in, 0.1, 0.1, 1.0, 1.0, sensor_posef);
+        for(size_t x = 0; x< range_image.width; ++x){
+                for(size_t y=0; y< range_image.height; ++y){
+                        if(!range_image.isValid(x,y)){
+                                std::cerr<<" Have invalid points:("<<x<<" ,"<<y<< ")" << std::endl;
+
+                        }
+                }
+        }
 }

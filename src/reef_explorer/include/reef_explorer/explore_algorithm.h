@@ -21,6 +21,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <tf_conversions/tf_eigen.h>
+#include <pcl/range_image/range_image.h>
+#include <nav_msgs/OccupancyGrid.h>
+
 
 #define HEIGHT 100
 
@@ -34,6 +38,7 @@ public:
     ~ExploreAlgorithm();
     void runExploreAlgorithm();
     double* getMinimumDistanceValuePointer();
+    void pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud_in);
 
 protected:
 private:
@@ -53,9 +58,6 @@ private:
     ros::Publisher position_pub;
     nav_msgs::Odometry odom;
     std::string odometryTopic;
-
-
-
 
     tf::TransformListener listener;
     tf::StampedTransform transform;
