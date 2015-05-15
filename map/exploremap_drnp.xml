@@ -17,15 +17,15 @@
     <fog>
       <density> 0.001 </density>
       <color>
-	      <r>0.017</r>
-	      <g>0.027</g>
-	      <b>0.079</b>
+        <r>0.017</r>
+        <g>0.027</g>
+        <b>0.079</b>
       </color>
     </fog>
     <color>
-	    <r>0.017</r>
-	    <g>0.027</g>
-	    <b>0.079</b>
+      <r>0.017</r>
+      <g>0.027</g>
+      <b>0.079</b>
     </color>
     <attenuation>
       <r>0.015</r>
@@ -62,7 +62,7 @@
  <vehicle>
     <name>girona500_RAUVI</name>
     <file>scene/g500drnp.urdf</file>
-	
+  
     <position>
       <x> 5</x>
       <y> 7 </y>
@@ -74,7 +74,7 @@
       <y>3.14 </y>
     </orientation>
 
-	<virtualRangeImage>
+  <virtualRangeImage>
       <name>girona500_RAUVI/rangeImage</name>
       <relativeTo>tilt_base</relativeTo>
       <resw> 320</resw>
@@ -89,7 +89,7 @@
         <p>0</p>
         <y>1.57 </y>
       </orientation>
-	  <frameId>/girona500_RAUVI/rangeImage</frameId>
+    <frameId>/girona500_RAUVI/rangeImage</frameId>
       <parameters>
         <fx>257.986</fx>
         <fy>257.341</fy>
@@ -130,7 +130,7 @@
     <file>terrain/cliffmap/terrain.3ds</file>
     <position>
       <x> 0</x>
-      <y> 0 </y>
+      <y> 32 </y>
       <z> -20 </z>
     </position>
     <orientation>
@@ -158,16 +158,16 @@
       <enableObjects> 0 </enableObjects>
       <rate>10</rate>
     </WorldToROSTF>
-	<ROSJointStateToArm>
-		<topic>girona500_RAUVI/joints_in</topic>
-		<vehicleName>girona500_RAUVI</vehicleName>
-	</ROSJointStateToArm>
-	<RangeImageSensorToROSImage> 
+  <ROSJointStateToArm>
+    <topic>girona500_RAUVI/joints_in</topic>
+    <vehicleName>girona500_RAUVI</vehicleName>
+  </ROSJointStateToArm>
+  <RangeImageSensorToROSImage> 
       <cameraName>girona500_RAUVI/rangeImage</cameraName>
       <imageTopic> /girona500_RAUVI/rangecamera </imageTopic>
       <infoTopic> /girona500_RAUVI/rangecamera/camera_info </infoTopic>
     </RangeImageSensorToROSImage>
-	 <multibeamSensorToLaserScan>
+   <multibeamSensorToLaserScan>
       <name>girona500_RAUVI/multibeam</name>
       <topic>girona500_RAUVI/multibeam</topic>
     </multibeamSensorToLaserScan>
