@@ -11,6 +11,7 @@
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
 \usepackage{minted}
 \usepackage{enumitem}
+\usepackage{listings}
 \usepackage[section]{placeins}
 \usepackage{nameref}
 \usemintedstyle{autumn}
@@ -49,6 +50,40 @@
 \renewcommand*{\figureautorefname}{figure}
 \def\stex{\texorpdfstring{\raisebox{-.5ex}S\kern-.5ex\TeX}{sTeX}\xspace}
 \def\sTeX{\stex}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  otherkeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
 
 \usepackage{quoting}
 \quotingsetup{vskip=50pt}
@@ -248,9 +283,63 @@ Obviously the above algorithm only illustrates the basic idea. In reality, we ha
 \section{Preliminaries}
 \label{sec:preliminaries}
 
+\subsection{a}
 
+\subsection{b}
+
+\subsection{c}
+\newpage
 \section{Towards an Optimal Scanning Algorithm}
 \label{sec:optimalScanningAlgorithm}
+
+Looking back to the initial idea of the algorithm which we illustrated in \autoref{sec:introduction}, we will now explore how to improve on this algorithm. First we will ensure that the robot always keeps a minimum distance to the reef while also not being too far away from the reef.\\
+
+\subsection{Distance Between Robot and Reef}
+
+\begin{wrapfigure}{l}{0.27\textwidth}
+\vspace{-28pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.25 \textwidth]{assets/reefSideways.jpg}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Reef Sideways}
+  \label{fig:reef}
+\vspace{20pt}
+\end{wrapfigure}
+
+If the robot starts in a random position, it is in our interest to get close enough to the reef to be able to scan the reef. Therefore we will move in the direction of the reef. To do this we use the following logic to check whether the robot is far enough away from the cliff to not crash but close enough to scan the cliff (see \autoref{fig:codeDistance}). Ideally the robot should always stay at exactly the \textit{minimumDistanceValue $\pm$ offset}. The \textit{scanDistance} is the scanned point of the reef that is closest to the robot.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{12pt}
+\begin{lstlisting}[language=C++]
+void ExploreAlgorithm::controlDistanceToCliff() {
+    if(minimumDistanceValue > scanDistance) {
+        moveTowardsCliff(); 
+    } else if(minimumDistanceValue < (scanDistance - offset)) {
+    	   moveAwayFromCliff();
+    } 
+}
+\end{lstlisting} 
+\vspace{-38pt}
+  \caption{Pseudocode Snippet to Show how to Control the Distance to the Cliff}
+  \label{fig:codeDistance}
+  \vspace{20pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
+
+The robot does not start to descend until it is within the specified distance away from the reef. Once it starts to descend it will continuously check if it is still within the specified distance. If this is not the case it will move horizontally either towards or away from the cliff to regain the specified distance using the logic illustrated in \autoref{fig:codeDistance}. When this is achieved it will continue its descend.\\
+
+Using this logic, the robot may run into issues
+
+\newpage
+
+\subsection{Fixing holes}
+\ednote{more sensors}
 
 \section{Evaluation}
 \label{sec:eval}
