@@ -1,0 +1,269 @@
+\documentclass[twoside, 12pt]{article}
+\usepackage{amsmath}
+\usepackage{lipsum} % Package to generate dummy text throughout this template
+\usepackage[english]{isodate}% http://ctan.org/pkg/isodate
+\usepackage{pgfgantt}
+\usepackage[show]{ed}
+\setlength{\parindent}{0pt}
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.2} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{minted}
+\usepackage{enumitem}
+\usepackage[section]{placeins}
+\usepackage{nameref}
+\usemintedstyle{autumn}
+\usepackage[hmarginratio=1:1,top=32mm,left=25mm,right=25mm,columnsep=18pt,bottom=27mm]{geometry} % Document margins
+\usepackage{multicol} % Used for the two-column layout of the document
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage{xspace}
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
+\usepackage{etoolbox}
+\usepackage{eurosym}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+%\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering\bfseries}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large\scshape}{\thesubsection.}{1em}{} % Change the look of the section titles
+\usepackage{cite}
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Naomi Pentrel $\cdot$ \href{mailto:n.pentrel@jacobs-university.de}{n.pentrel@jacobs-university.de} $\cdot$ \today} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[]{natbib}
+\usepackage{tocloft}
+\renewcommand*{\figureautorefname}{figure}
+\def\stex{\texorpdfstring{\raisebox{-.5ex}S\kern-.5ex\TeX}{sTeX}\xspace}
+\def\sTeX{\stex}
+
+\usepackage{quoting}
+\quotingsetup{vskip=50pt}
+
+%\usepackage{csquotes}
+%\MakeOuterQuote{"}
+
+\hypersetup{
+    bookmarks=true,
+    unicode=false,
+    pdftoolbar=true,
+    pdfmenubar=true,
+    pdffitwindow=false,
+    pdfstartview={FitH},
+    pdftitle={My title},
+    pdfauthor={Author},
+    pdfsubject={Subject},
+    pdfcreator={Creator},
+    pdfproducer={Producer},
+    pdfkeywords={keyword1} {key2} {key3},
+    pdfnewwindow=true,
+    colorlinks=false,
+    %linkcolor=red,
+    %citecolor=green,
+    %filecolor=magenta,
+    %urlcolor=cyan
+    pdfborder={0 0 0},
+}
+
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{qtree}
+\usepackage{gensymb}
+
+\usepackage{setspace}
+
+\usepackage{color}
+
+%\doublespacing
+% or:
+%\onehalfspacing
+
+%\renewcommand\cftchapafterpnum{\vskip10pt}
+%\renewcommand\cftsecafterpnum{\vskip15pt}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\vspace{-15mm}\fontsize{24pt}{10pt}\selectfont\textbf{// All comments are NOT created equal}} % Article title
+
+
+\newenvironment{myfont}{\fontfamily{\sfdefault}\selectfont}{\par}
+
+%----------------------------------------------------------------------------------------
+% Macros
+%----------------------------------------------------------------------------------------
+\newcommand{\sys}{\textsc{RPresentation}\xspace}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+\thispagestyle{empty}
+\pagenumbering{roman}
+\begin{flushright}
+    \includegraphics[scale=1.0]{assets/Logo}
+  \end{flushright}
+  \vspace{20mm}
+  \begin{center}
+    \huge
+    \textbf{Autonomous Coastline Exploration with a Focus on Reef Structures}
+  \end{center}
+  \vspace*{4mm}
+  \begin{center}
+   \Large by
+  \end{center}
+  \vspace*{4mm}
+  \begin{center}
+    \Large
+    \textbf{Naomi Pentrel \& Denis Rochau}
+  \end{center}
+  \vspace*{20mm}
+  \begin{center}
+    \large
+    Advanced Robotics
+  \end{center}
+  \vfill
+  \begin{flushright}
+    \large
+    \begin{tabular}{l}
+      
+      \hline
+      Prof. Dr. Andreas Birk\\
+      \\
+    \end{tabular}
+  \end{flushright}
+  \vspace*{8mm}
+  \begin{flushleft}
+    \large
+    Date of Submission: \today \\
+    \rule{\textwidth}{1pt}
+  \end{flushleft}
+  \begin{center}
+    \Large Jacobs University Bremen - School of Engineering and Science
+  \end{center}
+
+\newpage
+
+\thispagestyle{fancy} % All pages have headers and footers
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+ \section*{Abstract}
+ \label{sec:abstract}
+ 
+Mappings of underwater reef structures are needed in different fields. Regardless of why we want to explore underwater reefs, when exploring them we need a strategy to map them. The strategy we use for mapping the reef should accomplish two things: it should collect the data for the whole area we are interested in and it should keep our robot safe while it explores the area.\\
+
+The strategy we will explore in this paper goes along the reef in an iterative manner as it creates the map. As such it starts at a position on the top right of the map and works its way down. When it senses the ground or has gone far enough according to our specifications, it will move horizontally to an unexplored piece of the reef and go back up. After reaching the initial height it will again move horizontally to an unexplored piece of the reef and continue our algorithm.\\
+
+To get a good mapping of the reef and keep the robot safe at the same time we have to optimize the above algorithm. The detailed algorithm and the suggested optimizations will be explored in this paper. The result will be an algorithm that allows the sequential mapping of 3D structures underground.\\
+
+\newpage
+\tableofcontents
+
+\clearpage
+
+\newpage
+\thispagestyle{empty}
+\topskip0pt
+\vspace*{\fill}
+\begin{center}
+
+\vspace*{4cm}
+
+\centering
+
+\begin{quoting}
+\begin{center}
+\noindent
+\textit{At this point, we would like to thank Prof. Dr. Birk and Ravi Rathnam for helping and supporting us during this research project.\\}
+\end{center}
+\end{quoting}
+
+\vspace*{\fill}
+\end{center}
+
+\newpage
+\pagenumbering{arabic}
+
+\section{Introduction}
+\label{sec:introduction}
+
+When mapping underwater reef structures we care about the completeness of the map, as well as the optimization of the path the robot takes as it scans the reef. To achieve this we will start with a very basic algorithm. As we test this algorithm on a test reef, we will eliminate errors and improve the algorithm as needed.\\
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+\vspace{-26pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.48 \textwidth]{assets/reefOriginal}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Underwater Reef}
+  \label{fig:reef}
+\vspace{-10pt}
+\end{wrapfigure}
+
+We will be exploring the reef shown in \autoref{fig:reef} as a test. The idea of the basic algorithm that we will be using is shown in \autoref{fig:basicAlgorithm}. The robot starts in its starting position as shown in \autoref{fig:basicAlgorithm}. From there it will start scanning and move downwards until it either reaches the ground or a predefined \textit{maxDepth}. Once we reach that point the robot will move to the right for a predefined distance \textit{d}. At that point the robot goes back up until it reaches the predefined startDepth where it will go to the right for a predefined distance \textit{d}. This sequence is repeated until we reach the maxWidth.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{-26pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.90\textwidth]{assets/reefBasicAlgorithm.jpg}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Basic Algorithm}
+  \label{fig:basicAlgorithm}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
+
+Obviously the above algorithm only illustrates the basic idea. In reality, we have to also make sure the robot can actually move the way the algorithm wants it to move. Additionally, the robot should actually not be too far away from the reef so that it can scan the reef. In this paper we will therefore start from the basic algorithm discussed above and incrementally optimize until it successfully scans the reef. \\
+
+\section{Related Work}
+\label{sec:relatedworks}
+
+\ednote{DENIS DOES THIS.}
+  
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+
+\section{Towards an Optimal Scanning Algorithm}
+\label{sec:optimalScanningAlgorithm}
+
+\section{Evaluation}
+\label{sec:eval}
+
+
+\section{Future Work and Possible Extensions}
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\newpage
+
+\bibliography{kwarc}{}
+\bibliographystyle{alpha}
+\end{document}
