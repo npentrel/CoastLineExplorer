@@ -1,7 +1,9 @@
 #include "../include/reef_explorer/explore_algorithm.h"
+#include <tf/transform_datatypes.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 
-
-ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic)
+ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic) //: it(nh)
 {
     this->minimumDistanceValue = std::numeric_limits<double>::max();
     this->state = 0;
@@ -17,33 +19,34 @@ ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic)
     this->last_error = 0;
     this->tfName = "girona500_RAUVI/base_link";
     this->tfBaseName = "world";
+   // this->tfPointCloudName = "/octomap_point_cloud_centers";
     this->upwardMovement = false;
     this->rightMovement = false;
-    this->rightMovementConstant = 3.0;
+    this->rightMovementConstant = 1.5;
     this->zSpeed = 0.4;
     this->ySpeed = 0.4;
     this->xSpeed = 0.2;
     this->heightLimitTop = -9.0;
     this->heightLimitBottom = -50.0;
+    //this->pclOctoMapSub = this->nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >(this->tfPointCloudName, 100, &ExploreAlgorithm::pclCallback, this);
+    //this->pub = it.advertise("camera/image", 1);
     this->getTF();
 }
 
-ExploreAlgorithm::~ExploreAlgorithm() {
+ExploreAlgorithm::~ExploreAlgorithm()
+{
 
 }
 
 void ExploreAlgorithm::runExploreAlgorithm()
 {
 
-    ros::NodeHandle nh("~");
-    ros::Subscriber pcl_sub = nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >("points_in", 1, &ExploreAlgorithm::pclCallback, this);
-
 
     setErrorValues();
     this->initOdom();
     this->getTF();
-    std::cout << "Distance: " << this->minimumDistanceValue << "\n";
-    std::cout << "Pos Z: " << this->transform.getOrigin().z() << "\n";
+    std::cout << "Distance to reef: " << this->minimumDistanceValue << "\n";
+    std::cout << "Current Position: X: " << this->transform.getOrigin().x() << " Y: " << this->transform.getOrigin().y() <<  " Z: " << this->transform.getOrigin().z() << "\n";
     this->checkStateConditions();
 
     switch(this->state)
@@ -92,11 +95,12 @@ void ExploreAlgorithm::setErrorValues()
         this->current_fix = 1*(this->error) + 0.001*(this->total_error_I) + 0.5*(this->derivative_error_D);
         this->last_error = this->error; 
     }
-
+    /*
     std::cout << "ERROR: " << this->error << std::endl;
     std::cout << "TOTAL ERROR: " << this->total_error_I << std::endl;
     std::cout << "DERIVATIVE ERROR: " << this->derivative_error_D << std::endl;
     std::cout << "FIX ERROR: " << this->current_fix << std::endl;       
+    */
 }
 
 /*
@@ -233,23 +237,97 @@ void ExploreAlgorithm::moveRight()
     this->position_pub.publish(this->odom);
 }
 
-void ExploreAlgorithm::pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud_in){
-        tf::StampedTransform sensor_tf;
-        ros::Time t;
-        t.fromNSec(cloud_in->header.stamp);
-        this->listener.lookupTransform(this->tfBaseName, cloud_in->header.frame_id, t, this->transform);
+/*
 
-        Eigen::Affine3d sensor_pose;
-        tf::transformTFToEigen(sensor_tf, sensor_pose);
-        pcl::RangeImage range_image;
-        Eigen::Affine3f sensor_posef(sensor_pose);
-        range_image.createFromPointCloud(*cloud_in, 0.1, 0.1, 1.0, 1.0, sensor_posef);
-        for(size_t x = 0; x< range_image.width; ++x){
-                for(size_t y=0; y< range_image.height; ++y){
-                        if(!range_image.isValid(x,y)){
-                                std::cerr<<" Have invalid points:("<<x<<" ,"<<y<< ")" << std::endl;
+void ExploreAlgorithm::pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud)
+{
+    tf::StampedTransform tfSensor;
+   /* tf::Transform transformQueryDirection = this->transform; 
+   // transform.setRotation(tf::Quaternion(0, 0, 0, 1));
 
-                        }
-                }
+    transformBroadcaster.sendTransform(tf::StampedTransform(transformQueryDirection, ros::Time::now(), this->tfName, "fake_image_sensor"));
+    ros::Rate rate(0.01);
+    rate.sleep();
+    ros::Time t;
+    t.fromNSec(cloud->header.stamp);
+    this->listener.lookupTransform("fake_image_sensor", cloud->header.frame_id, ros::Time::now(), tfSensor);
+/*//*/
+    ros::Time t;
+    t.fromNSec(cloud->header.stamp*1000);
+
+
+    try
+    {
+        this->listener.lookupTransform(this->tfName, cloud->header.frame_id, t, tfSensor);
+    }
+    catch (tf::TransformException &ex)
+    {
+      ROS_ERROR("%s",ex.what());
+      ros::Duration(0.1).sleep();
+      return;
+    }
+
+    std::cout << "X: " << tfSensor.getOrigin().x() << " Y: " << tfSensor.getOrigin().y() << " Z: " << tfSensor.getOrigin().z() << "\n";
+    tf::Vector3 vec(tfSensor.getOrigin().x(), -tfSensor.getOrigin().y(), -tfSensor.getOrigin().z());
+    tfSensor.setOrigin(vec);
+    tf::Quaternion q(0.70711, 0, 0, 0.70711);
+    tfSensor.setRotation(q);
+    Eigen::Affine3d sensorPose;
+    tf::transformTFToEigen(tfSensor, sensorPose);
+    pcl::RangeImage rangeImage;
+    Eigen::Affine3f sensorPoseF(sensorPose);    
+
+    float angularResolution = static_cast<float>(0.5f * (M_PI/180.0f));  //   1.0 degree in radians
+    float maxAngleWidth = static_cast<float>(120.0f * (M_PI/180.0f));  // 360.0 degree in radians
+    float maxAngleHeight = static_cast<float>(90.0f * (M_PI/180.0f));  // 180.0 degree in radians
+    pcl::RangeImage::CoordinateFrame coordinate_frame = pcl::RangeImage::LASER_FRAME;
+    float noiseLevel = 0.05;
+    float minRange = 0.0f;
+    int borderSize = 0;
+
+    rangeImage.createFromPointCloud(*cloud, angularResolution, maxAngleWidth, maxAngleHeight,
+                                  sensorPoseF, coordinate_frame, noiseLevel, minRange, borderSize);
+
+    double min = std::numeric_limits<double>::max();
+    for(int x = 0; x < rangeImage.width; ++x)
+    {
+        for(int y=0; y < rangeImage.height; ++y)
+        {
+            if(rangeImage.isValid(x,y) && rangeImage.getPoint(x,y).range < min)
+            {
+                min = rangeImage.getPoint(x,y).range;
+            }
         }
+    }
+    std::cout << "Looking back: " << min << std::endl;
+    std::cout << rangeImage << "\n";
+
+
+    IplImage *tmp = cvCreateImage(cvSize(rangeImage.width , rangeImage.height), IPL_DEPTH_32F, 1); 
+    for(int x = 0; x < rangeImage.width; ++x)
+    {
+        for(int y=0; y < rangeImage.height; ++y)
+        {
+            if(rangeImage.isValid(x,y))
+            {
+                cvSet2D(tmp, y, x, cvScalar(rangeImage.getPoint(x,y).range));
+            }
+            else
+            {
+                cvSet2D(tmp, y, x, cvScalar(std::numeric_limits<float>::max()));
+            }
+        }
+    }
+
+
+    cv::Mat rangeMat(tmp);  
+
+    cv_bridge::CvImage cvImage;
+    cvImage.header = pcl_conversions::fromPCL(cloud->header);
+    cvImage.encoding = sensor_msgs::image_encodings::TYPE_32FC1;
+    cvImage.image = rangeMat;
+    pub.publish(cvImage.toImageMsg());
+    cvReleaseImage(&tmp);
+
 }
+*/

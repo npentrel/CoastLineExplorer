@@ -14,6 +14,8 @@
 #include <pcl/point_types.h>
 #include <boost/foreach.hpp>
 #include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
+#include <limits>
 
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
@@ -38,7 +40,7 @@ public:
     ~ExploreAlgorithm();
     void runExploreAlgorithm();
     double* getMinimumDistanceValuePointer();
-    void pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud_in);
+  //  void pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud);
 
 protected:
 private:
@@ -61,8 +63,12 @@ private:
 
     tf::TransformListener listener;
     tf::StampedTransform transform;
+//  tf::StampedTransform transformPointCloud;
+//  tf::TransformBroadcaster transformBroadcaster;
     std::string tfName;
     std::string tfBaseName;
+//  std::string tfPointCloudName;
+    ros::Subscriber pclOctoMapSub;
     double moveRightPointCoordinateY;
     bool upwardMovement;
     bool rightMovement;
@@ -81,6 +87,11 @@ private:
     double derivative_error_D;
     double last_error;
     double current_fix;
+
+
+  //  image_transport::ImageTransport it;
+  //  image_transport::Publisher pub;
+
 
 };
 

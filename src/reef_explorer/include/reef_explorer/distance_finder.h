@@ -25,8 +25,7 @@ class DistanceFinder
 {
 
 public:
-
-    DistanceFinder(const std::string& rangeImageTopic);
+    DistanceFinder(const std::string& rangeImageTopic, const std::string& jointTopic, const std::string& panTopic, const std::string& tiltTopic, double splitFactorHeight, double splitFactorWidth);
     ~DistanceFinder();
 
     void setMinimumDistanceValuePointer(double* minimumDistanceValue);
@@ -39,6 +38,14 @@ private:
     image_transport::ImageTransport it_;
     image_transport::Subscriber image_sub_;
     std::string rangeImageTopic;
+    std::string panTopic;
+    std::string tiltTopic;
+    std::string jointTopic;
+    double splitFactorHeight;
+    double splitFactorWidth;
+    ros::Publisher pub;
+    int state;
+
 };
 
 #endif
