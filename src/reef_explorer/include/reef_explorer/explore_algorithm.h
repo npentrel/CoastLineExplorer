@@ -38,7 +38,6 @@ public:
     ~ExploreAlgorithm();
     void runExploreAlgorithm();
     double* getMinimumDistanceValuePointer();
-    void pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud_in);
 
 protected:
 private:
