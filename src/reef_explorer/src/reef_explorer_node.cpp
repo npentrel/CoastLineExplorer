@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "reef_explorer");
     ExploreAlgorithm exploreAlgorithm(odometryTopic);
-    DistanceFinder distanceFinder(rangeImageTopic, jointTopic, panName, tiltName , 0.25, 0.0);
+    DistanceFinder distanceFinder(rangeImageTopic, jointTopic, panName, tiltName , 0.25, 0.0, exploreAlgorithm.getSyncState());
     distanceFinder.setMinimumDistanceValuePointer(exploreAlgorithm.getMinimumDistanceValuePointer());
 
 	ros::Rate r(25);

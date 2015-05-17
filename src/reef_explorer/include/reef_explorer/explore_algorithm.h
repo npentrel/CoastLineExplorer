@@ -40,6 +40,7 @@ public:
     ~ExploreAlgorithm();
     void runExploreAlgorithm();
     double* getMinimumDistanceValuePointer();
+    volatile int* getSyncState();
   //  void pclCallback(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud);
 
 protected:
@@ -87,6 +88,7 @@ private:
     double derivative_error_D;
     double last_error;
     double current_fix;
+    volatile int syncState;
 
 
   //  image_transport::ImageTransport it;

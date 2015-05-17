@@ -28,6 +28,7 @@ ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic) //: it(nh)
     this->xSpeed = 0.2;
     this->heightLimitTop = -9.0;
     this->heightLimitBottom = -50.0;
+    this->syncState = 0;
     //this->pclOctoMapSub = this->nh.subscribe<pcl::PointCloud<pcl::PointXYZ> >(this->tfPointCloudName, 100, &ExploreAlgorithm::pclCallback, this);
     //this->pub = it.advertise("camera/image", 1);
     this->getTF();
@@ -40,35 +41,41 @@ ExploreAlgorithm::~ExploreAlgorithm()
 
 void ExploreAlgorithm::runExploreAlgorithm()
 {
-
-
-    setErrorValues();
-    this->initOdom();
-    this->getTF();
-    std::cout << "Distance to reef: " << this->minimumDistanceValue << "\n";
-    std::cout << "Current Position: X: " << this->transform.getOrigin().x() << " Y: " << this->transform.getOrigin().y() <<  " Z: " << this->transform.getOrigin().z() << "\n";
-    this->checkStateConditions();
-
-    switch(this->state)
+    if(this->syncState == 0)
     {
-        case 0:
-            this->controlDistanceToCliff();
-            break;
-        case 1:
-            this->followCliff();
-            break;
-        case 2:
-            this->moveRight();
-            break;
-        default:
-            break;
+        setErrorValues();
+        this->initOdom();
+        this->getTF();
+        std::cout << "Distance to reef: " << this->minimumDistanceValue << "\n";
+        std::cout << "Current Position: X: " << this->transform.getOrigin().x() << " Y: " << this->transform.getOrigin().y() <<  " Z: " << this->transform.getOrigin().z() << "\n";
+        this->checkStateConditions();
+    
+        switch(this->state)
+        {
+            case 0:
+                this->controlDistanceToCliff();
+                break;
+            case 1:
+                this->followCliff();
+                break;
+            case 2:
+                this->moveRight();
+                break;
+            default:
+                break;
+        }
+        this->syncState = 1;
     }
-
 }
 
 double* ExploreAlgorithm::getMinimumDistanceValuePointer()
 {
     return &minimumDistanceValue;
+}
+
+volatile int* ExploreAlgorithm::getSyncState()
+{
+    return &syncState;
 }
 
 void ExploreAlgorithm::controlDistanceToCliff() {

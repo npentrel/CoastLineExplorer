@@ -2,7 +2,8 @@
 	<node name="octomap" pkg="octomap_server" type="octomap_server_node">
 		<remap from="cloud_in" to="girona500_RAUVI/points" />
 		<param name="frame_id" value="/world" />
-		<param name="base_frame_id" value="/girona500_RAUVI/rangeImage"/>
+		<param name="base_frame_id" value="/girona500_RAUVI/base_link"/>
 		<param name="resolution" value="0.2" />
+		<param name="latch" value="true" />
 	</node>
 </launch>
