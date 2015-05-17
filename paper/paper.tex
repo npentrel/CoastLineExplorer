@@ -453,7 +453,7 @@ The code in \autoref{fig:codeReducedDistance} will return the correct \textit{sc
 \vspace{-50pt}
 \end{wrapfigure}
 
-When examining the map closer, we again look for holes in the map. Specifically, we will again look at the places where we found holes in the map before (see \autoref{fig:firstMappingProblems}). As can be seen in \autoref{fig:secondMappingProblems}, one hole is completely gone. The three other holes are slightly reduced but not yet fully mapped.\\
+When examining the map closer, we again look for holes in the map. Specifically, we will again look at the places where we found holes in the map before (see \autoref{fig:firstMappingProblems}). As can be seen in \autoref{fig:secondMappingProblems}, one hole is completely gone. The three other holes are slightly reduced but not yet fully mapped. We will tackle them in the next section.\\
 
 \begin{wrapfigure}{c}{\textwidth}
 \vspace{-28pt}
@@ -475,8 +475,73 @@ When examining the map closer, we again look for holes in the map. Specifically,
 \vspace{-50pt}
 \end{wrapfigure}
 
-\subsection{Rotation}
-The holes we are still having in our map are mostly on the side of reef structures. Therefore an obvious idea is to rotate our robot once in a while to scan the sides of the reef structures. From this idea we derived our approach which is to rotate our robot once around the z axis once every few seconds. This does not only fix the holes we are currently having in our map but also allows us to rescan previously scanned parts of the map for better results. 
+\subsection{Rotations}
+The remaining holes are mostly on the sides of reef structures. Therefore we want to rotate our robot every few seconds around the z axis. Thus we scan the sides of the reef structures as well. The approach we use could also be mimicked by moving the sensor but we chose to rotate the whole robot as can be seen in the code in \autoref{fig:codeRotation}.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{-2pt}
+\begin{lstlisting}[language=C++]
+void ExploreAlgorithm::rotateAround() {
+    tf::Quaternion q = this->transform.getRotation();
+    tf::Matrix3x3 m(q);
+    this->odom.twist.twist.angular.z = 1;
+    double yaw = getCurrentYaw(m) 
+    yaw = yaw + PI;
+    if (fullyRotated(yaw)) {
+		stopRotating();
+    }
+    this->position_pub.publish(this->odom);
+}
+\end{lstlisting} 
+\vspace{-38pt}
+  \caption{Pseudocode Snippet to Show how to Control the Distance to the Cliff}
+  \label{fig:codeRotation}
+  \vspace{22pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-100pt}
+\end{wrapfigure}
+
+The code turns the robot 360 degrees, hence once around its z-axis. This ensures that the sides of the reef structures are scanned as well. As can be seen in \autoref{fig:finalMapping}, this creates a full mapping of the area. When looking at the places where we previously had holes (see \autoref{fig:secondMappingProblems}), we notice that only one hole is still present. We have therefore successfully covered the other two. The remaining hole could be removed if we were to change the pitch of our robot.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{0pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.45 \textwidth]{assets/FinalMapping}
+    \includegraphics[width=0.49 \textwidth]{assets/reefOriginal}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Mapping using the Distance Algorithm with Rotation}
+  \label{fig:finalMapping}
+\vspace{20pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-100pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{-28pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.23 \textwidth]{assets/FinalMappingHole1}
+    \includegraphics[width=0.23 \textwidth]{assets/FinalMappingHole2}
+    \includegraphics[width=0.23 \textwidth]{assets/FinalMappingHole3}
+    \includegraphics[width=0.23 \textwidth]{assets/FinalMappingHole4}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Mapping Problems using the Distance Algorithm with Rotation}
+  \label{fig:secondMappingProblems}
+\vspace{20pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
 
 \section{Limitations and Possible Extensions}
 \label{sec:limitations}
