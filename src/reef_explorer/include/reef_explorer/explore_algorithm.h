@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits>
+#include <vector>
 
 //ROS
 #include <ros/ros.h>
@@ -25,16 +26,17 @@
 #include <pcl/range_image/range_image.h>
 #include <nav_msgs/OccupancyGrid.h>
 
-
-#define HEIGHT 100
-
-
+#include <octomap/octomap.h>
+#include <octomap_msgs/Octomap.h>
+#include <octomap_msgs/conversions.h>
 
 class ExploreAlgorithm
 {
 
 public:
-    ExploreAlgorithm(const std::string& odometryTopic);
+    ExploreAlgorithm(const std::string& odometryTopic = "/dataNavigator_G500RAUVI", const std::string& octomapTopic = "/octomap_full", const std::string& tfRobotName = "/girona500_RAUVI/base_link", const std::string& tfBaseName = "/world",
+                     double heightLimitTop = -9.0, double heightLimitBottom = -50.0, double rightMovementConstant = 2.0, double xSpeed = 0.2, double ySpeed = 0.4, double zSpeed = 0.4,
+                     double scanDistance = 5.0, double scanDistanceDownMovementOffset = 0.1, double rotateTimerCount = 10.0);
     ~ExploreAlgorithm();
     void runExploreAlgorithm();
     double* getMinimumDistanceValuePointer();
@@ -48,6 +50,11 @@ private:
     void getTF();
     void checkStateConditions();
     void moveRight();
+    void rotateAround();
+    octomap::point3d calculateRollPitchYaw(const octomap::point3d& direction,const octomap::point3d& robotDirection);
+
+    void octomapCb(const octomap_msgs::Octomap::ConstPtr& msg);
+    void callbackRotateTimer(const ros::TimerEvent& event);
 
     int state;
     double minimumDistanceValue;
@@ -74,12 +81,15 @@ private:
     double heightLimitTop;
     double heightLimitBottom;
 
-    // pid things
-    double error;
-    double total_error_I;
-    double derivative_error_D;
-    double last_error;
-    double current_fix;
+    std::string octomapTopic;
+    ros::Subscriber octomapSub;
+    std::pair<std::vector<octomap::point3d>,octomap::point3d> missingRayVec;
+
+    double lastYaw;
+    bool changeStateNextIter;
+    double counter;
+    double lastRotateTimer;
+    double rotateTimerCount;
 
 };
 

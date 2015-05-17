@@ -25,15 +25,18 @@
 // current appraoch
 std::string odometryTopic = "/dataNavigator_G500RAUVI";
 std::string rangeImageTopic = "/girona500_RAUVI/rangecamera";
+std::string octomapTopic = "/octomap_full";
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "reef_explorer");
-    ExploreAlgorithm exploreAlgorithm(odometryTopic);
+    ExploreAlgorithm exploreAlgorithm(odometryTopic, octomapTopic);
     DistanceFinder distanceFinder(rangeImageTopic, -1.0, 0.25);
     distanceFinder.setMinimumDistanceValuePointer(exploreAlgorithm.getMinimumDistanceValuePointer());
-
 	ros::Rate r(25);
+	ros::spinOnce();
+	r.sleep();
+	ros::spinOnce();
 	while (ros::ok())
     {
         exploreAlgorithm.runExploreAlgorithm();

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="reef_explorer" pkg="reef_explorer" type="reef_explorer_node"></node>
+</launch>
