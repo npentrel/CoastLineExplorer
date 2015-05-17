@@ -92,12 +92,15 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
                     msg.position = vec;
                     pub.publish(msg);
                     // spin once to let tf publish
+                    ros::spinOnce();
+                    ros::Rate r(sleepFreq);
+                    r.sleep(); 
                     while(this->moveSensor == false)
                     {
                         ros::spinOnce();
                         ros::Rate r(sleepFreq);
                         r.sleep();
-                    }
+                    }     
                     this->state = 2;
                 }
                 break;
@@ -113,6 +116,9 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
                     msg.position = vec;
                     pub.publish(msg);
                     // spin once to let tf publish
+                    ros::spinOnce();
+                    ros::Rate r(sleepFreq);
+                    r.sleep(); 
                     while(this->moveSensor == false)
                     {
                         ros::spinOnce();
@@ -134,6 +140,9 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
                     msg.position = vec;
                     pub.publish(msg);
                     // spin once to let tf publish
+                    ros::spinOnce();
+                    ros::Rate r(sleepFreq);
+                    r.sleep(); 
                     while(this->moveSensor == false)
                     {
                         ros::spinOnce();
@@ -155,6 +164,9 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
                     msg.position = vec;
                     pub.publish(msg);
                     // spin once to let tf publish
+                    ros::spinOnce();
+                    ros::Rate r(sleepFreq);
+                    r.sleep(); 
                     while(this->moveSensor == false)
                     {
                         ros::spinOnce();
@@ -172,7 +184,10 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
                     msgJoint.name[1] = this->tiltTopic;
                     msgJoint.position = vec;
                     pub.publish(msgJoint);
-                    // spin once to let tf publish               
+                    // spin once to let tf publish   
+                    ros::spinOnce();
+                    ros::Rate r(sleepFreq);
+                    r.sleep();             
                     while(this->moveSensor == false)
                     {
                         ros::spinOnce();
