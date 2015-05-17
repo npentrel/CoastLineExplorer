@@ -41,7 +41,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Naomi Pentrel $\cdot$ \href{mailto:n.pentrel@jacobs-university.de}{n.pentrel@jacobs-university.de} $\cdot$ \today} % Custom header text
+\fancyhead[C]{\href{mailto:n.pentrel@jacobs-university.de}{Naomi Pentrel} $\cdot$ \href{d.rochau@jacobs-university.de}{Denis Rochau} $\cdot$ \today} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 \usepackage{graphicx}
 \usepackage{wrapfig}
@@ -303,7 +303,7 @@ Using these basic capabilities we are able to map sample reefs.
 Looking back to the initial idea of the algorithm which we illustrated in \autoref{sec:introduction}, we will now explore how to improve on this algorithm. First we will ensure that the robot always keeps a minimum distance to the reef while also not being too far away from the reef.\\
 
 \subsection{Distance Between Robot and Reef}
-
+\label{sec:distanceBetweenRobotAndReef}
 \begin{wrapfigure}{l}{0.27\textwidth}
 \vspace{-28pt}
   \begin{center}
@@ -343,7 +343,7 @@ void ExploreAlgorithm::controlDistanceToCliff() {
 The robot does not start to descend until it is within the specified distance away from the reef. Once it starts to descend it will continuously check if it is still within the specified distance. If this is not the case it will move horizontally either towards or away from the cliff to regain the specified distance using the logic illustrated in \autoref{fig:codeDistance}. When this is achieved it will continue its descend.\\
 
 \begin{wrapfigure}{c}{\textwidth}
-\vspace{-28pt}
+\vspace{0pt}
   \begin{center}
   \fbox{
     \includegraphics[width=0.47 \textwidth]{assets/MapOnlyDistance}
@@ -382,7 +382,99 @@ Overall this approach already provides us with good results as visible in \autor
 \vspace{-50pt}
 \end{wrapfigure}
 
-\subsection{Fixing holes}
+\subsection{Improving the Value of scanDistance}
+\label{sec:improvingValueOfScanDistance
+}
+
+In the previous section we have identified that one problem with our algorithm is that the value of \textit{scanDistance} might make us not explore areas because of spikes. While we need to make sure that the robot does not crash into anything, we still want to maximize what we can scan. Therefore, we will calculate the value \textit{scanDistance} not of the full field of vision of the robot but rather of a part of it that is as big as the robot.\\
+
+\begin{wrapfigure}{l}{0.45\textwidth}
+\vspace{-28pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.42 \textwidth]{assets/ReducedDistanceExplain.jpg}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Robot's Field of Vision}
+  \label{fig:reducedDistanceExplain}
+\vspace{20pt}
+\end{wrapfigure}
+
+Using the subpart of the field of vision of the robot that is as big as the robot ensures that we can move as close as possible to the reef while still not crashing into anything. This is illustrated in \autoref{fig:reducedDistanceExplain}. In \autoref{sec:distanceBetweenRobotAndReef}, the robot would take the whole field of vision illustrated by the outer yellow rectangle. In the new approach we would like to only use the smaller orange rectangle.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{-2pt}
+\begin{lstlisting}[language=C++]
+double DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg) {
+	cv_bridge::CvImageConstPtr cv_ptr = getImage(msg, msg->encoding);
+	double scanDistance = std::numeric_limits<double>::max();
+	int startRobotFieldWidth = (fieldOfVisionWidth - robotWidth)/2;
+	int endRobotFieldWidth = startRobotField + robotWidth;
+	int startRobotFieldHeight = (fieldOfVisionHeight - robotHeight)/2;
+	int endRobotFieldHeight = startRobotFieldHeight + robotWidth;
+	
+	for(int i = startRobotFieldWidth; i < endRobotFieldWidth; i++)
+		for(int j = startRobotFieldHeight; j < endRobotFieldHeight; j++)
+			if(cv_ptr->image.at<float>(i,j) < scanDistance)
+				scanDistance = cv_ptr->image.at<float>(i,j);
+	return scanDistance;
+}
+\end{lstlisting} 
+\vspace{-38pt}
+  \caption{Pseudocode Snippet to Show how to Control the Distance to the Cliff}
+  \label{fig:codeReducedDistance}
+  \vspace{60pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
+
+The code in \autoref{fig:codeReducedDistance} will return the correct \textit{scanDistance} for the area of the robot robotField. This value will now be used in the code which we use to keep the correct distance to the reef (see \autoref{fig:codeDistance}). Using this improved version of the algorithm, the newly scanned map is better. The overall scanned map can be see in \autoref{fig:secondMapping}.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{0pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.47 \textwidth]{assets/ReducedDistanceFinding}
+    \includegraphics[width=0.49 \textwidth]{assets/reefOriginal}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Mapping using the Distance Algorithm}
+  \label{fig:secondMapping}
+\vspace{20pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
+
+When examining the map closer, we again look for holes in the map. Specifically, we will again look at the places whereh we found holes in the map before (see \autoref{fig:firstMappingProblems}). As can be seen in \autoref{fig:secondMappingProblems}, one hole is completely gone. The three other holes are slightly reduced but not yet fully mapped.\\
+
+\begin{wrapfigure}{c}{\textwidth}
+\vspace{-28pt}
+  \begin{center}
+  \fbox{
+    \includegraphics[width=0.23 \textwidth]{assets/ReducedDistanceFindingHole1}
+    \includegraphics[width=0.23 \textwidth]{assets/ReducedDistanceFindingHole2}
+    \includegraphics[width=0.23 \textwidth]{assets/ReducedDistanceFindingHole3}
+    \includegraphics[width=0.23 \textwidth]{assets/ReducedDistanceFindingHole4}
+    }
+  \end{center}
+\vspace{-20pt}
+  \caption{Mapping Problems using the Distance Algorithm}
+  \label{fig:secondMappingProblems}
+\vspace{20pt}
+\end{wrapfigure}
+
+\begin{wrapfigure}{l}{\textwidth}
+\vspace{-50pt}
+\end{wrapfigure}
+
+\subsection{Scanning for Missing Data}
+
 \ednote{more sensors or looking left and right}
 
 \section{Limitations}
@@ -394,7 +486,6 @@ Overall this approach already provides us with good results as visible in \autor
 
 \section{Evaluation}
 \label{sec:eval}
-
 
 
 \section{Future Work and Possible Extensions}
