@@ -284,14 +284,16 @@ Obviously the above algorithm only illustrates the basic idea. In reality, we ha
 \subsection{ROS \& Octomap}
 For this research project we will make use of the Robot Operating System (ROS). ROS is a framework for creating robot software.  Within ROS, this project will use the octomap\_server \cite{hornung13auro}.\\
 
-The octomap\_server works by loading a 3D map and distributing it to nodes in a compact binary format. Thus it can build and save 3D OctoMaps.\\
+The octomap\_server works by listening to a 3D point cloud produced by one or more sensors and then combining those point cloud into an OctoMap. An OctoMap is a 3D map based on an underlying octree data structure. This OctoMap is then distributed to all nodes which are subscribed to the octomap server topics, in a compact binary format. Thus we can build and save 3D OctoMaps.\\
 
 \subsection{Robot Overview}
 
 The robot we will be using in this project has the following basic capabilities:
 \begin{itemize}
 \item movement along the x, y, and z axes,
-\item mapping functionality through sensors. 
+\item rotation around the x, y, and z axes,
+\item panning and tilting of sensor,
+\item mapping functionality through range sensor,
 \end{itemize}
 
 Using these basic capabilities we are able to map sample reefs.
@@ -451,7 +453,7 @@ The code in \autoref{fig:codeReducedDistance} will return the correct \textit{sc
 \vspace{-50pt}
 \end{wrapfigure}
 
-When examining the map closer, we again look for holes in the map. Specifically, we will again look at the places whereh we found holes in the map before (see \autoref{fig:firstMappingProblems}). As can be seen in \autoref{fig:secondMappingProblems}, one hole is completely gone. The three other holes are slightly reduced but not yet fully mapped.\\
+When examining the map closer, we again look for holes in the map. Specifically, we will again look at the places where we found holes in the map before (see \autoref{fig:firstMappingProblems}). As can be seen in \autoref{fig:secondMappingProblems}, one hole is completely gone. The three other holes are slightly reduced but not yet fully mapped.\\
 
 \begin{wrapfigure}{c}{\textwidth}
 \vspace{-28pt}
@@ -473,24 +475,27 @@ When examining the map closer, we again look for holes in the map. Specifically,
 \vspace{-50pt}
 \end{wrapfigure}
 
-\subsection{Scanning for Missing Data}
-
-\ednote{more sensors or looking left and right}
+\subsection{Rotation}
+The holes we are still having in our map are mostly on the side of reef structures. Therefore an obvious idea is to rotate our robot once in a while to scan the sides of the reef structures. From this idea we derived our approach which is to rotate our robot once around the z axis once every few seconds. This does not only fix the holes we are currently having in our map but also allows us to rescan previously scanned parts of the map for better results. 
 
 \section{Limitations and Possible Extensions}
 \label{sec:limitations}
-
 Due to time constraints, this paper is not extensive enough to cover all optimization possibilities. This section will therefore point out limitations of our algorithm and ideas on how to implement these.
 
 \subsection{Obstacle avoidance}
-Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also nor realize this. This is due to the lack of sensors on top, bottom, and back of the robot.\\
+Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also not realize this. There exist different possible solutions for this problem. Firstly we could add more sensors to the robot and use them to implement a behavior based collision avoidance algorithm similar to our approach of keeping the distance to the reef. The advantage of this approach is that it is easy to implement and we are additionally able to react to dynamic objects in the environment like fish.\\
 
-Since adding sensors would be cost intensive, we ideally have to move our sensor or ourselves and create more information about our surroundings. We could then query the octomap around us and be certain that we can move up, down, or back. A disadvantage of this is, of course, that dynamic objects like fish might confuse our robot.\\
+Since adding sensors would be cost intensive, we ideally have to move our sensor or ourselves and create more information about our surroundings. We could then query the OctoMap around us by casting rays in our movement direction and then check if we have information about the area in which we are moving. If we already have mapped the area in direction of our movement then we can use a behavior based approach to keep a distance to those objects. If we have no information available we can rotated our sensor or robot towards the direction of movement and obtain the necessary information. Afterwards we continue our algorithm and use a behavior based approach to now keep a distance to the potentially newly scanned objects. A clear disadvantage of this is, of course, that dynamic objects like fish might confuse our robot.\\
+
+\subsection{Map Creation}
+Under the current algorithm our map creation procedure is not optimal. For example we are rotating every few seconds to obtain more data, which costs us time and would cost a real world robot a considerable amount of energy. It would therefore be advisable to only rotate when we are actually need to do so in order to obtain more information. The idea here would be to create a list of unscanned and incomplete parts by querying the OctoMap. Afterwards we would take this set and calculate an optimal movement and rotation path for our robot so that it scans those parts. Here we could also move our sensor instead of moving the robot as that would save us time and our real world robot energy.\\
+
+Another way we can improve our map creation is to add more sensors to the robot. As before this approach is easy but relatively expensive.\\
 
 \subsection{Movement}
-With the current algorithm, the robot moves in a stair-like format. It, for example, moves backwards, down, backwards, down, etc. Ideally the robot should move in a seamless motion and use interpolation to combine the knowledge of having to move backwards and down.\\
+With the current algorithm, the robot moves in a stair-like format. It, for example, moves backwards, down, backwards, down, etc. Ideally the robot should move in a seamless motion and use interpolation to combine the knowledge of having to move backwards and down. Moreover we also could include our obtained OctoMap to create a reference path along which we want to move. Another point to mention is that we disregard how a underwater robot would behave in real life. A algorithm we want to use for a real world robot would need to regard the real world movement capabilities of the robot. \\
 
-It is likely also better to alter the algorithm described here so that the robot predominantly moves sideways, since sideways-motion is easier for robots. This should work similarly by simply changing some variables in the code.\\ 
+One prominent example for this disregarding of real life robot capabilities is visible in our approach to move mostly vertically instead of horizontally along the reef. Most underwater robots can move more effective horizontally and it is therefore a good idea to move sideways if possible. Nevertheless we could implement this easily by simply changing some variables in our code.\\ 
 
 \section{Evaluation}
 \label{sec:eval}
