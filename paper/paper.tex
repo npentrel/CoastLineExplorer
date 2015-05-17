@@ -283,13 +283,20 @@ Obviously the above algorithm only illustrates the basic idea. In reality, we ha
 \section{Preliminaries}
 \label{sec:preliminaries}
 
-\subsection{ROS}
+\subsection{ROS \& Octomap}
+For this research project we will make use of the Robot Operating System (ROS). ROS is a framework for creating robot software.  Within ROS, this project will use the octomap_server \cite{hornung13auro}.\\
 
-\subsection{Octomap}
-\ednote{DENIS}
+The octomap_server works by loading a 3D map and distributing it to nodes in a compact binary format. Thus it can build and save 3D OctoMaps.\\
 
 \subsection{Robot Overview}
-\ednote{can move and has a pan tilt unit and a sensor}
+
+The robot we will be using in this project has the following basic capabilities:
+\begin{itemize}
+\item movement along the x, y, and z axes,
+\item mapping functionality through sensors. 
+\end{itemize}
+
+Using these basic capabilities we are able to map sample reefs.
 
 \newpage
 \section{Towards an Optimal Scanning Algorithm}
@@ -338,6 +345,8 @@ void ExploreAlgorithm::controlDistanceToCliff() {
 The robot does not start to descend until it is within the specified distance away from the reef. Once it starts to descend it will continuously check if it is still within the specified distance. If this is not the case it will move horizontally either towards or away from the cliff to regain the specified distance using the logic illustrated in \autoref{fig:codeDistance}. When this is achieved it will continue its descend.\\
 
 Using this logic, the robot may run into issues because it does not have sensors above, below, or behind. This will not be covered in this paper but we will discuss this in \autoref{sec:limitations} and elaborate how it could be done in \autoref{sec:future}. Apart from running into objects, the robot can also fail to scan all areas due to the fact that we use the closest point in our field of vision to determine where we should be (see \autoref{fig:codeDistance}). In the case of spikes some areas may thus remain unscanned. The latter problem will be discussed in the next subsection.\\
+
+\ednote{add octomap image}
 
 \subsection{Fixing holes}
 \ednote{more sensors or looking left and right}
