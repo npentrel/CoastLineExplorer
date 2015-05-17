@@ -26,7 +26,7 @@ class DistanceFinder
 
 public:
 
-    DistanceFinder(const std::string& rangeImageTopic);
+    DistanceFinder(const std::string& rangeImageTopic, double splitFactorHeight, double splitFactorWidth);
     ~DistanceFinder();
 
     void setMinimumDistanceValuePointer(double* minimumDistanceValue);
@@ -39,6 +39,8 @@ private:
     image_transport::ImageTransport it_;
     image_transport::Subscriber image_sub_;
     std::string rangeImageTopic;
+    double splitFactorHeight;
+    double splitFactorWidth;
 };
 
 #endif

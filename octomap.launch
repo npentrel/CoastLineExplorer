@@ -3,5 +3,6 @@
 		<remap from="cloud_in" to="girona500_RAUVI/points" />
 		<param name="frame_id" value="/world" />
 		<param name="base_frame_id" value="/girona500_RAUVI"/>
+		<param name="resolution" value="0.2" />
 	</node>
 </launch>

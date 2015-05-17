@@ -1,10 +1,12 @@
 #include "../include/reef_explorer/distance_finder.h"
 
 
-DistanceFinder::DistanceFinder(const std::string& rangeImageTopic) : it_(nh_)
+DistanceFinder::DistanceFinder(const std::string& rangeImageTopic, double splitFactorHeight, double splitFactorWidth) : it_(nh_)
 {
     this->rangeImageTopic = rangeImageTopic;
     this->image_sub_ = it_.subscribe(rangeImageTopic, 1, &DistanceFinder::imageCb, this);
+    this->splitFactorHeight = splitFactorHeight;
+    this->splitFactorWidth = splitFactorWidth;
 }
 
 DistanceFinder::~DistanceFinder()
@@ -31,9 +33,23 @@ void DistanceFinder::imageCb(const sensor_msgs::ImageConstPtr& msg)
     }
 
     double min = std::numeric_limits<double>::max();
-    for(int i = 0; i < cv_ptr->image.rows; i++)
+    int widthMin = 0;
+    int widthMax = cv_ptr->image.rows;
+    if(0 < this->splitFactorWidth || this->splitFactorWidth < 0.5)
     {
-        for(int j = 0; j < cv_ptr->image.cols; j++)
+        widthMin = this->splitFactorWidth * cv_ptr->image.rows;
+        widthMax = (1.0 - this->splitFactorWidth) * cv_ptr->image.rows;
+    }
+    int heightMin = 0;
+    int heightMax = cv_ptr->image.rows;
+    if(0 < this->splitFactorHeight || this->splitFactorHeight < 0.5)
+    {
+        heightMin = this->splitFactorHeight * cv_ptr->image.cols;
+        heightMax = (1.0 - this->splitFactorHeight) * cv_ptr->image.cols;
+    }
+    for(int i = widthMin; i < widthMax; i++)
+    {
+        for(int j = heightMin; j < heightMax; j++)
         {
             if(cv_ptr->image.at<float>(i,j) < min)
             {

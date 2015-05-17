@@ -19,7 +19,7 @@ ExploreAlgorithm::ExploreAlgorithm(const std::string& odometryTopic)
     this->tfBaseName = "world";
     this->upwardMovement = false;
     this->rightMovement = false;
-    this->rightMovementConstant = 3.0;
+    this->rightMovementConstant = 2.0;
     this->zSpeed = 0.4;
     this->ySpeed = 0.4;
     this->xSpeed = 0.2;
@@ -37,8 +37,8 @@ void ExploreAlgorithm::runExploreAlgorithm()
     setErrorValues();
     this->initOdom();
     this->getTF();
-    std::cout << "Distance: " << this->minimumDistanceValue << "\n";
-    std::cout << "Pos Z: " << this->transform.getOrigin().z() << "\n";
+    std::cout << "Distance to reef: " << this->minimumDistanceValue << "\n";
+    std::cout << "Current Position: X: " << this->transform.getOrigin().x() << " Y: " << this->transform.getOrigin().y() <<  " Z: " << this->transform.getOrigin().z() << "\n";
     this->checkStateConditions();
 
     switch(this->state)
@@ -87,11 +87,12 @@ void ExploreAlgorithm::setErrorValues()
         this->current_fix = 1*(this->error) + 0.001*(this->total_error_I) + 0.5*(this->derivative_error_D);
         this->last_error = this->error; 
     }
-
+/*
     std::cout << "ERROR: " << this->error << std::endl;
     std::cout << "TOTAL ERROR: " << this->total_error_I << std::endl;
     std::cout << "DERIVATIVE ERROR: " << this->derivative_error_D << std::endl;
     std::cout << "FIX ERROR: " << this->current_fix << std::endl;       
+*/
 }
 
 /*
