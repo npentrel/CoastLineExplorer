@@ -545,7 +545,7 @@ The code turns the robot 360 degrees, hence once around its z-axis. This ensures
 
 \section{Limitations and Possible Extensions}
 \label{sec:limitations}
-Due to time constraints, this paper is not extensive enough to cover all optimization possibilities. This section will therefore point out limitations of our algorithm and ideas on how to implement these.
+Due to time constraints, this paper is not extensive enough to cover all optimization possibilities. This section will therefore point out limitations of our algorithm and ideas on how to overcome them.
 
 \subsection{Obstacle avoidance}
 Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also not realize this. There exist different possible solutions for this problem. Firstly we could add more sensors to the robot and use them to implement a behavior based collision avoidance algorithm similar to our approach of keeping the distance to the reef. The advantage of this approach is that it is easy to implement and we are additionally able to react to dynamic objects in the environment like fish.\\
