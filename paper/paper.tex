@@ -477,23 +477,40 @@ When examining the map closer, we again look for holes in the map. Specifically,
 
 \ednote{more sensors or looking left and right}
 
-\section{Limitations}
+\section{Limitations and Possible Extensions}
 \label{sec:limitations}
-\subsection{Obstacle avoidance}
-\ednote{limitation ->  query octomap around us}
-\ednote{disadvantage dynamic object like fish}
 
+Due to time constraints, this paper is not extensive enough to cover all optimization possibilities. This section will therefore point out limitations of our algorithm and ideas on how to implement these.
+
+\subsection{Obstacle avoidance}
+Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also nor realize this. This is due to the lack of sensors on top, bottom, and back of the robot.\\
+
+Since adding sensors would be cost intensive, we ideally have to move our sensor or ourselves and create more information about our surroundings. We could then query the octomap around us and be certain that we can move up, down, or back. A disadvantage of this is, of course, that dynamic objects like fish might confuse our robot.\\
+
+\subsection{Movement}
+With the current algorithm, the robot moves in a stair-like format. It, for example, moves backwards, down, backwards, down, etc. Ideally the robot should move in a seamless motion and use interpolation to combine the knowledge of having to move backwards and down.\\
+
+It is likely also better to alter the algorithm described here so that the robot predominantly moves sideways, since sideways-motion is easier for robots. This should work similarly by simply changing some variables in the code.\\ 
 
 \section{Evaluation}
 \label{sec:eval}
 
+We set out in this project to create a complete mapping of a given reef structure. Overall, the created algorithm accomplishes this. In the beginning, we started with a simple algorithm, which we then incrementally improved to optimize the mapping. The resulting mapping has only small holes and is therefore very good.\\
 
-\section{Future Work and Possible Extensions}
-\label{sec:future}
-
+Unfortunately, this research could not be tested in a real life scenario, and we can therefore not make any claims about its real-life performance. We strongly recommend creating a better algorithm for obstacle avoidance before testing this algorithm in a real life scenario.\\
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+In this research project, we were trying to create a mapping of a given underwater reef. Using a robot, we began with a very simple algorithm that explores a rectangle in a sequential fashion. In the next step we ensured that the robot would always keep a certain distance to the reef but also not be too far away from the reef.\\
+
+At this point in time the created mapping was already very good but it contained a few holes which we tried to fix in the next step. Therefore we improved the calculation of the distance the robot has to keep to the reef by not using the robots whole field of vision to compute how far away it needs to be but rather by only using a smaller fraction of its vision, namely the part where the robot would move if it were to move forwards. Thus we ensured that the robot can get closer to the reef even if there are spikes or other structures around that would otherwise deter the robot from going closer.\\
+
+Using this improved algorithm, the robot was indeed able to create a better mapping and close up one of the holes from the previous mapping while reducing the size of the holes in the other cases.\\
+
+\ednote{add the rest if there is more}
+
+In conclusion, this algorithm successfully creates a mapping of a reef structure. As pointed out in \autoref{sec:eval}, there are some improvements that could be made to make the mapping even better. As is the mapping is already very good and almost complete. Depending on the requirements for the level of completeness of the mapping, this research might already be enough to give satisfactory results in a real-life scenario.\\
 
 \newpage
 
