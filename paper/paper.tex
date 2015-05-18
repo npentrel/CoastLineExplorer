@@ -567,13 +567,11 @@ In this research project, we were trying to create a mapping of a given underwat
 
 At this point in time the created mapping was already very good but it contained a few holes which we tried to fix in the next step. Therefore we improved the calculation of the distance the robot has to keep to the reef by not using the robots whole field of vision to compute how far away it needs to be but rather by only using a smaller fraction of its vision, namely the part where the robot would move if it were to move forwards. Thus we ensured that the robot can get closer to the reef even if there are spikes or other structures around that would otherwise deter the robot from going closer.\\
 
-Using this improved algorithm, the robot was indeed able to create a better mapping and close up one of the holes from the previous mapping while reducing the size of the holes in the other cases.\\
+Using this improved algorithm, the robot was indeed able to create a better mapping and close up one of the holes from the previous mapping while reducing the size of the holes in the other cases. These other cases were at spots on the side of elevated reef structures. To further improve our algorithm, we therefore added horizontal rotational movements to the algorithm in order to see the sides of the structures around us. This filled most of the remaining holes. The only hole that remained in the map is on the top of an elevated reef structure. To remove it, we would need to add vertical rotations as well.\\
 
-\ednote{add the rest if there is more}
+Unfortunately, this research could not be tested in a real life scenario, and we can therefore not make any claims about its real-life performance. We strongly recommend creating a better algorithm for obstacle avoidance before testing this algorithm in a real life scenario. We also would suggest that we develop an algorithm to ensure that we only rotate the robot when absolutely necessary which then predominantly only rotates the sensors.\\
 
-Unfortunately, this research could not be tested in a real life scenario, and we can therefore not make any claims about its real-life performance. We strongly recommend creating a better algorithm for obstacle avoidance before testing this algorithm in a real life scenario.\\
-
-In conclusion, this algorithm successfully creates a mapping of a reef structure. As pointed out in \autoref{sec:eval}, there are some improvements that could be made to make the mapping even better. As is the mapping is already very good and almost complete. Depending on the requirements for the level of completeness of the mapping, this research might already be enough to give satisfactory results in a real-life scenario.\\
+In conclusion, the created algorithm successfully creates a mapping of a reef structure. As pointed out in \autoref{sec:limitations}, there are some improvements that could be made to make the mapping even better. As is the mapping is already very good and almost complete. Depending on the requirements for the level of completeness of the mapping, this research might already be enough to give satisfactory results in a real-life scenario.\\
 
 \newpage
 
