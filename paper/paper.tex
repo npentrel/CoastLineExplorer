@@ -292,7 +292,7 @@ Most other papers which deal with the actual guidance do so in combination with 
 \label{sec:preliminaries}
 
 \subsection{ROS \& Octomap}
-For this research project we will make use of the Robot Operating System (ROS). ROS is a framework for creating robot software.  Within ROS, this project will use the octomap\_server \cite{hornung13auro}.\\
+For this research project we will make use of the Robot Operating System (ROS). ROS is a collection of frameworks for the development of robot control software. It provides us with many packages that implement functionalities like point cloud publishing and the simulation of different sensors. Within ROS, this project will use the octomap\_server \cite{hornung13auro}.\\
 
 The octomap\_server works by listening to a 3D point cloud produced by one or more sensors and then combining those point cloud into an OctoMap. An OctoMap is a 3D map based on an underlying octree data structure. This OctoMap is then distributed to all nodes which are subscribed to the octomap server topics, in a compact binary format. Thus we can build and save 3D OctoMaps.\\
 
