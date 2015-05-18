@@ -302,7 +302,7 @@ Using these basic capabilities we are able to map sample reefs.
 \section{Towards an Optimal Scanning Algorithm}
 \label{sec:optimalScanningAlgorithm}
 
-Looking back to the initial idea of the algorithm which we illustrated in \autoref{sec:introduction}, we will now explore how to improve on this algorithm. First we will ensure that the robot always keeps a minimum distance to the reef while also not being too far away from the reef.\\
+Looking back to the initial idea of the algorithm which we illustrated in \autoref{sec:introduction}, we will now explore how to improve on this algorithm \cite{CoastLineExplorer:npentrel15}. First, we will ensure that the robot always keeps a minimum distance to the reef while also not being too far away from the reef.\\
 
 \subsection{Distance Between Robot and Reef}
 \label{sec:distanceBetweenRobotAndReef}
@@ -503,10 +503,10 @@ void ExploreAlgorithm::rotateAround() {
 \vspace{-100pt}
 \end{wrapfigure}
 
-The code turns the robot 360 degrees, hence once around its z-axis. This ensures that the sides of the reef structures are scanned as well. As can be seen in \autoref{fig:finalMapping}, this creates a full mapping of the area. When looking at the places where we previously had holes (see \autoref{fig:secondMappingProblems}), we notice that only one hole is still present. We have therefore successfully covered the other two. The remaining hole could be removed if we were to change the pitch of our robot.\\
+The code turns the robot 360 degrees, hence once around its z-axis. This ensures that the sides of the reef structures are scanned as well. As can be seen in \autoref{fig:finalMapping}, this creates a full mapping of the area. When looking at the places where we previously had holes (see \autoref{fig:secondMappingProblems}), we notice that only one hole is still present. We have therefore successfully covered the other two. The remaining hole could be removed if we were to change the pitch of our robot.\footnote{To see a condensed video of the mapping see \href{http://youtu.be/LIdYnKuljzE}{http://youtu.be/LIdYnKuljzE}}\\
 
 \begin{wrapfigure}{c}{\textwidth}
-\vspace{0pt}
+\vspace{-20pt}
   \begin{center}
   \fbox{
     \includegraphics[width=0.45 \textwidth]{assets/FinalMapping}
@@ -516,7 +516,7 @@ The code turns the robot 360 degrees, hence once around its z-axis. This ensures
 \vspace{-20pt}
   \caption{Mapping using the Distance Algorithm with Rotation}
   \label{fig:finalMapping}
-\vspace{20pt}
+\vspace{12pt}
 \end{wrapfigure}
 
 \begin{wrapfigure}{l}{\textwidth}
@@ -536,7 +536,7 @@ The code turns the robot 360 degrees, hence once around its z-axis. This ensures
 \vspace{-20pt}
   \caption{Mapping Problems using the Distance Algorithm with Rotation}
   \label{fig:secondMappingProblems}
-\vspace{20pt}
+\vspace{12pt}
 \end{wrapfigure}
 
 \begin{wrapfigure}{l}{\textwidth}
@@ -548,26 +548,17 @@ The code turns the robot 360 degrees, hence once around its z-axis. This ensures
 Due to time constraints, this paper is not extensive enough to cover all optimization possibilities. This section will therefore point out limitations of our algorithm and ideas on how to overcome them.
 
 \subsection{Obstacle avoidance}
-Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also not realize this. There exist different possible solutions for this problem. Firstly we could add more sensors to the robot and use them to implement a behavior based collision avoidance algorithm similar to our approach of keeping the distance to the reef. The advantage of this approach is that it is easy to implement and we are additionally able to react to dynamic objects in the environment like fish.\\
+Using the current algorithm, the robot might still run into some obstacles. If the robot for example navigates into a hole, it will not realize that it will crash into the ground. If there is something behind the robot and the robot tries to go backwards it will also not realize this. There exist different possible solutions for this problem. We could, for instance, add more sensors to the robot and use them to implement a behavior-based collision avoidance algorithm similar to our approach of keeping the distance to the reef. The advantage of this approach would be that it is easy to implement and we would additionally be able to react to dynamic objects in the environment like fish.\\
 
-Since adding sensors would be cost intensive, we ideally have to move our sensor or ourselves and create more information about our surroundings. We could then query the OctoMap around us by casting rays in our movement direction and then check if we have information about the area in which we are moving. If we already have mapped the area in direction of our movement then we can use a behavior based approach to keep a distance to those objects. If we have no information available we can rotated our sensor or robot towards the direction of movement and obtain the necessary information. Afterwards we continue our algorithm and use a behavior based approach to now keep a distance to the potentially newly scanned objects. A clear disadvantage of this is, of course, that dynamic objects like fish might confuse our robot.\\
+Since adding sensors would be cost intensive, we ideally have to move the robot's sensor or the robot itself to create more information about its surroundings. We could then query the OctoMap around it by casting rays in our movement direction and then check if we have information about the area in which we want to move. If we already have mapped the area in that direction, we can use a behavior-based approach to keep a distance to objects. If we have no information available, we can rotate our sensor or robot towards the direction of movement and obtain the necessary information. Afterwards we continue our algorithm and use a behavior-based approach to keep a distance to any newly scanned objects. A clear disadvantage of this is that dynamic objects like fish might confuse our robot.\\
 
 \subsection{Map Creation}
-Under the current algorithm our map creation procedure is not optimal. For example we are rotating every few seconds to obtain more data, which costs us time and would cost a real world robot a considerable amount of energy. It would therefore be advisable to only rotate when we are actually need to do so in order to obtain more information. The idea here would be to create a list of unscanned and incomplete parts by querying the OctoMap. Afterwards we would take this set and calculate an optimal movement and rotation path for our robot so that it scans those parts. Here we could also move our sensor instead of moving the robot as that would save us time and our real world robot energy.\\
-
-Another way we can improve our map creation is to add more sensors to the robot. As before this approach is easy but relatively expensive.\\
+Under the current algorithm our map creation procedure is not optimal. The robot, for example, rotates every few seconds to obtain more data, which costs us time and would cost a real world robot a considerable amount of energy. It would therefore be advisable to actually rotate only the sensor when possible and only rotate the whole robot we actually need to do so in order to obtain more information. The idea here is to create a list of unscanned and incomplete parts by querying the OctoMap. Afterwards we could take this set and calculate a good movement and rotation path for our robot so that it can scan those parts. Another way we can improve our map creation is to add more sensors to the robot. As before this approach is easy but relatively expensive.\\
 
 \subsection{Movement}
-With the current algorithm, the robot moves in a stair-like format. It, for example, moves backwards, down, backwards, down, etc. Ideally the robot should move in a seamless motion and use interpolation to combine the knowledge of having to move backwards and down. Moreover we also could include our obtained OctoMap to create a reference path along which we want to move. Another point to mention is that we disregard how a underwater robot would behave in real life. A algorithm we want to use for a real world robot would need to regard the real world movement capabilities of the robot. \\
+The robot moves in a stair-like format. It, for example, moves backwards, down, backwards, down, etc. Ideally the robot should move in a seamless motion and use interpolation to combine the knowledge of having to move backwards and down. Moreover we also could include our obtained OctoMap to create a reference path along which we want to move. Another point to mention is that we disregard how an underwater robot would behave in real life. For a real life robot, the algorithm would need to be changed according to the limitations of the real world movement capabilities of the robot. \\
 
-One prominent example for this disregarding of real life robot capabilities is visible in our approach to move mostly vertically instead of horizontally along the reef. Most underwater robots can move more effective horizontally and it is therefore a good idea to move sideways if possible. Nevertheless we could implement this easily by simply changing some variables in our code.\\ 
-
-\section{Evaluation}
-\label{sec:eval}
-
-We set out in this project to create a complete mapping of a given reef structure. Overall, the created algorithm accomplishes this. In the beginning, we started with a simple algorithm, which we then incrementally improved to optimize the mapping. The resulting mapping has only small holes and is therefore very good.\\
-
-Unfortunately, this research could not be tested in a real life scenario, and we can therefore not make any claims about its real-life performance. We strongly recommend creating a better algorithm for obstacle avoidance before testing this algorithm in a real life scenario.\\
+One prominent example for is apparent in our approach to moving mostly vertically instead of horizontally along the reef. Most underwater robots can move more effective horizontally and it is therefore a good idea to move sideways if possible. Nevertheless this could be implemented by simply changing some variables in our code.\\ 
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -579,6 +570,8 @@ At this point in time the created mapping was already very good but it contained
 Using this improved algorithm, the robot was indeed able to create a better mapping and close up one of the holes from the previous mapping while reducing the size of the holes in the other cases.\\
 
 \ednote{add the rest if there is more}
+
+Unfortunately, this research could not be tested in a real life scenario, and we can therefore not make any claims about its real-life performance. We strongly recommend creating a better algorithm for obstacle avoidance before testing this algorithm in a real life scenario.\\
 
 In conclusion, this algorithm successfully creates a mapping of a reef structure. As pointed out in \autoref{sec:eval}, there are some improvements that could be made to make the mapping even better. As is the mapping is already very good and almost complete. Depending on the requirements for the level of completeness of the mapping, this research might already be enough to give satisfactory results in a real-life scenario.\\
 
